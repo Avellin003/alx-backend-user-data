@@ -14,10 +14,9 @@ PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
-    for i in fields:
-        sms = re.sub(i + '=' + '.*?' + separator,
-                     i + '=' + redaction + separator, message)
-    return sms
+    return re.sub('|'.join(f"{field}=.+?{separator}" for field in fields),
+                  lambda match: re.sub("=.+;", f"={redaction}{separator}",
+                                       match.group()), message)
 
 
 class RedactingFormatter(logging.Formatter):
