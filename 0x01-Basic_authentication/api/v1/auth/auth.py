@@ -19,7 +19,7 @@ class Auth:
             - path (str): The URL path to evaluate.
             - excluded_paths (List of str): Paths exempted from authentication.
         Return:
-            - True if the path is not among excluded_paths; otherwise, False."""
+            - True if the path is not in excluded_paths; else False."""
         if path is None:
             return True
         elif excluded_paths is None or excluded_paths == []:
