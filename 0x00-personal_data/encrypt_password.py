@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ ENCRIPT PASSWORD MODULE"""
 import bcrypt
-from bcrypt import hashpw   
+from bcrypt import hashpw
 
 
 def hash_password(password: str) -> bytes:
