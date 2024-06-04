@@ -7,6 +7,7 @@ from typing import (
     List,
     TypeVar
 )
+User = TypeVar('User')
 
 
 class Auth:
@@ -30,10 +31,10 @@ class Auth:
             for a in excluded_paths:
                 if a.startswith(path):
                     return False
-                if path.startswith(i):
+                if path.startswith(a):
                     return False
                 if a[-1] == "*":
-                    if path.startswith(i[:-1]):
+                    if path.startswith(a[:-1]):
                         return False
         return True
 
@@ -48,7 +49,7 @@ class Auth:
             return None
         return header
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(self, request=None) -> User:
         """
         Returns None: just a placeholder
         """

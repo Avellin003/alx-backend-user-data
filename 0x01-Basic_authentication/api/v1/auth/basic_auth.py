@@ -8,6 +8,8 @@ from typing import TypeVar
 
 from models.user import User
 
+User = TypeVar('User')
+
 
 class BasicAuth(Auth):
     """Performs Basic Authorization
@@ -45,7 +47,7 @@ class BasicAuth(Auth):
 
     def extract_user_credentials(self,
                                  decoded_base64_authorization_header:
-                                 str) -> (str, str):
+                                 str) -> tuple[str, str]:
         """
         return the email and password from the Base64 decoded value
         """
@@ -60,7 +62,7 @@ class BasicAuth(Auth):
         return (email, password)
 
     def user_object_from_credentials(self, user_email: str,
-                                     user_pwd: str) -> TypeVar('User'):
+                                     user_pwd: str) -> User:
         """
         returns the User instance based on email and password
         """
@@ -79,7 +81,7 @@ class BasicAuth(Auth):
         except Exception:
             return None
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(self, request=None) -> User:
         """
         return the User instance based on the Authorization header
         """
