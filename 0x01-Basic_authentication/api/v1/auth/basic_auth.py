@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
 """
-Module for Basic Authorization
+Module for Basic Authorization protocol
 """
 import base64
-from typing import TypeVar
 from .auth import Auth
+from typing import TypeVar
+
 from models.user import User
-
-
 User = TypeVar('User')
 
 
 class BasicAuth(Auth):
-    """Performs Basic Authorization
-    and returns the User instance based on the Authorization header
+    """ Class that handles the Basic Authorization protocol
     """
     def extract_base64_authorization_header(self,
                                             authorization_header: str) -> str:
         """
-        Gets the Base64-encoded value of the Authorization header
+        Gets the Base64-encoded part of the Authorization header
+        and returns it
         """
         if authorization_header is None:
             return None
@@ -26,24 +25,23 @@ class BasicAuth(Auth):
             return None
         if not authorization_header.startswith("Basic "):
             return None
-        tok = authorization_header.split(" ")[-1]
-        return tok
+        token = authorization_header.split(" ")[-1]
+        return token
 
     def decode_base64_authorization_header(self,
                                            base64_authorization_header:
                                            str) -> str:
         """
-        Decrypted Base64 value of the Authorization header
-        and returns the decoded value
+        Decrypts the Base64-encoded part of the Authorization header
         """
         if base64_authorization_header is None:
             return None
         if not isinstance(base64_authorization_header, str):
             return None
         try:
-            text = base64_authorization_header.encode('utf-8')
-            text = base64.b64decode(text)
-            return text.decode('utf-8')
+            decod_txt = base64_authorization_header.encode('utf-8')
+            decod_txt = base64.b64decode(decod_txt)
+            return decod_txt.decode('utf-8')
         except Exception:
             return None
 
@@ -51,8 +49,7 @@ class BasicAuth(Auth):
                                  decoded_base64_authorization_header:
                                  str) -> tuple[str, str]:
         """
-        return the email and password from the Base64 decoded value
-        and returns a tuple of the email and password
+        gives the email and password from the decoded base64 string
         """
         if decoded_base64_authorization_header is None:
             return (None, None)
@@ -67,8 +64,7 @@ class BasicAuth(Auth):
     def user_object_from_credentials(self, user_email: str,
                                      user_pwd: str) -> User:
         """
-        returns the User instance based on email and password
-        and returns the User instance based on the email and password
+        gives the User instance based on email and password
         """
         if user_email is None or not isinstance(user_email, str):
             return None
@@ -87,15 +83,16 @@ class BasicAuth(Auth):
 
     def current_user(self, request=None) -> User:
         """
-        return the User instance based on the Authorization header
-        and returns None if the User is not found
+        returns  back the current user
+        and returns it
         """
-        auth_h = self.authorization_header(request)
-        if auth_h is not None:
-            token = self.extract_base64_authorization_header(auth_h)
+        auto_h = self.authorization_header(request)
+        if auto_h is not None:
+            token = self.extract_base64_authorization_header(auto_h)
             if token is not None:
                 decoded = self.decode_base64_authorization_header(token)
                 if decoded is not None:
                     email, pword = self.extract_user_credentials(decoded)
                     if email is not None:
                         return self.user_object_from_credentials(email, pword)
+        return
