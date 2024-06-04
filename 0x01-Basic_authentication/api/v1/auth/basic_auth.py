@@ -6,12 +6,13 @@ import base64
 from .auth import Auth
 from typing import TypeVar
 from models.user import User
-
+"""creation of a type variable User"""
 User = TypeVar('User')
 
 
 class BasicAuth(Auth):
     """Performs Basic Authorization
+    and returns the User instance based on the Authorization header
     """
     def extract_base64_authorization_header(self,
                                             authorization_header: str) -> str:
@@ -32,6 +33,7 @@ class BasicAuth(Auth):
                                            str) -> str:
         """
         Decrypted Base64 value of the Authorization header
+        and returns the decoded value
         """
         if base64_authorization_header is None:
             return None
@@ -49,6 +51,7 @@ class BasicAuth(Auth):
                                  str) -> tuple[str, str]:
         """
         return the email and password from the Base64 decoded value
+        and returns a tuple of the email and password
         """
         if decoded_base64_authorization_header is None:
             return (None, None)
@@ -64,6 +67,7 @@ class BasicAuth(Auth):
                                      user_pwd: str) -> User:
         """
         returns the User instance based on email and password
+        and returns the User instance based on the email and password
         """
         if user_email is None or not isinstance(user_email, str):
             return None
@@ -83,6 +87,7 @@ class BasicAuth(Auth):
     def current_user(self, request=None) -> User:
         """
         return the User instance based on the Authorization header
+        and returns None if the User is not found
         """
         Auth_header = self.authorization_header(request)
         if Auth_header is not None:
