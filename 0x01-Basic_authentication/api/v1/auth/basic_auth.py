@@ -91,13 +91,12 @@ class BasicAuth(Auth):
         return the User instance based on the Authorization header
         and returns None if the User is not found
         """
-        Auth_header = self.authorization_header(request)
-        if Auth_header is not None:
-            token = self.extract_base64_authorization_header(Auth_header)
+        auth_h = self.authorization_header(request)
+        if auth_h is not None:
+            token = self.extract_base64_authorization_header(auth_h)
             if token is not None:
                 decoded = self.decode_base64_authorization_header(token)
                 if decoded is not None:
                     email, pword = self.extract_user_credentials(decoded)
                     if email is not None:
                         return self.user_object_from_credentials(email, pword)
-        return
