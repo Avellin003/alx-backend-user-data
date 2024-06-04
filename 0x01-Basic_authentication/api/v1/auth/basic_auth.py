@@ -5,9 +5,8 @@ Module for Basic Authorization
 import base64
 from .auth import Auth
 from typing import TypeVar
+
 from models.user import User
-"""creation of a type variable User"""
-User = TypeVar('User')
 
 
 class BasicAuth(Auth):
@@ -64,7 +63,7 @@ class BasicAuth(Auth):
         return (email, password)
 
     def user_object_from_credentials(self, user_email: str,
-                                     user_pwd: str) -> User:
+                                     user_pwd: str) -> TypeVar('User'):
         """
         returns the User instance based on email and password
         and returns the User instance based on the email and password
