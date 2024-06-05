@@ -4,17 +4,16 @@ Module for Basic Authorization protocol
 """
 import base64
 from .auth import Auth
-from typing import TypeVar
+from typing import Optional, Tuple  # Imported for type annotations
 
-from models.user import User
-User = TypeVar('User')
+from models.user import User  # Correctly import User
 
 
 class BasicAuth(Auth):
     """ Class that handles the Basic Authorization protocol
     """
-    def extract_base64_authorization_header(self,
-                                            authorization_header: str) -> str:
+    def extract_base64_authorization_header(
+            self, authorization_header: str) -> Optional[str]:
         """
         Gets the Base64-encoded part of the Authorization header
         and returns it
@@ -28,9 +27,8 @@ class BasicAuth(Auth):
         token = authorization_header.split(" ")[-1]
         return token
 
-    def decode_base64_authorization_header(self,
-                                           base64_authorization_header:
-                                           str) -> str:
+    def decode_base64_authorization_header(
+            self, base64_authorization_header: str) -> Optional[str]:
         """
         Decrypts the Base64-encoded part of the Authorization header
         """
@@ -45,9 +43,9 @@ class BasicAuth(Auth):
         except Exception:
             return None
 
-    def extract_user_credentials(self,
-                                 decoded_base64_authorization_header:
-                                 str) -> tuple[str, str]:
+    def extract_user_credentials(
+            self, decoded_base64_authorization_header: str
+            ) -> Tuple[Optional[str], Optional[str]]:
         """
         gives the email and password from the decoded base64 string
         """
@@ -62,7 +60,7 @@ class BasicAuth(Auth):
         return (email, password)
 
     def user_object_from_credentials(self, user_email: str,
-                                     user_pwd: str) -> User:
+                                     user_pwd: str) -> Optional[User]:
         """
         gives the User instance based on email and password
         """
@@ -81,9 +79,9 @@ class BasicAuth(Auth):
         except Exception:
             return None
 
-    def current_user(self, request=None) -> User:
+    def current_user(self, request=None) -> Optional[User]:
         """
-        returns  back the current user
+        returns back the current user
         and returns it
         """
         auto_h = self.authorization_header(request)
@@ -95,4 +93,4 @@ class BasicAuth(Auth):
                     email, pword = self.extract_user_credentials(decoded)
                     if email is not None:
                         return self.user_object_from_credentials(email, pword)
-        return
+        return None
