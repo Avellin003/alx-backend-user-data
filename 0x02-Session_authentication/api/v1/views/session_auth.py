@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
-""" This module contains the views for User routes """
+"""session_auth module"""
 import os
 from flask import jsonify, request
 from api.v1.views import app_views
 from models.user import User
 
+
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def auth_session():
     """
-    Route: POST /auth_session/login
-    Description: Handles user login. Returns a JSON representation of the user if found, else returns an error message.
+    Handles user authentication
+    Returns:
+        the dictionary representation of the User
     """
-    emails = request.form.get('email')
-    passwords = request.form.get('password')
-    if emails is None or emails == '':
+    email = request.form.get('email')
+    password = request.form.get('password')
+    if email is None or email == '':
         return jsonify({"error": "email missing"}), 400
-    if passwords is None or passwords == '':
+    if password is None or password == '':
         return jsonify({"error": "password missing"}), 400
-    users = User.search({"email": emails})
+    users = User.search({"email": email})
     if not users or users == []:
         return jsonify({"error": "no user found for this email"}), 404
     for user in users:
-        if user.is_valid_password(passwords):
+        if user.is_valid_password(password):
             from api.v1.app import auth
             session_id = auth.create_session(user.id)
             resp = jsonify(user.to_json())
@@ -30,12 +32,11 @@ def auth_session():
             return resp
     return jsonify({"error": "wrong password"}), 401
 
-@app_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+
+@app_views.route('/auth_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
 def handle_logout():
-    """
-    Route: DELETE /auth_session/logout
-    Description: Handles user logout. Destroys the session if it exists.
-    """
+    """handles the logout of the user"""
     from api.v1.app import auth
     if auth.destroy_session(request):
         return jsonify({}), 200

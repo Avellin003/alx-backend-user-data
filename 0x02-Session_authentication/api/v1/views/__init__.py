@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""This module sets up the routes for the API
-"""
+"""the base module"""
 from flask import Blueprint
 
 app_views = Blueprint("app_views", __name__, url_prefix="/api/v1")

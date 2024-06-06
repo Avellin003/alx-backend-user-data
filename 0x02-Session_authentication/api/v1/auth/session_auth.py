@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-SessionAuth class definition
-"""
+"""the module for the Session Authorization protocol"""
 import base64
 from uuid import uuid4
 from typing import TypeVar
@@ -11,31 +9,42 @@ from models.user import User
 
 
 class SessionAuth(Auth):
-    """ Session Authorization protocol methods implementation
-    """
-    usersession_id = {}
+    """Session Authorization class"""
+    user_id_by_session_id = {}
 
     def create_session(self, user_id: str = None) -> str:
         """
-        Generates a Session ID for a user with id user_id
+        creation of a session ID
+        arguments:
+            users_id (str): user's user id
+        returns:
+            - the session ID created
         """
         if user_id is None or not isinstance(user_id, str):
             return None
-        ids = uuid4()
-        self.usersession_id[str(ids)] = user_id
-        return str(ids)
+        id = uuid4()
+        self.user_id_by_session_id[str(id)] = user_id
+        return str(id)
 
     def user_id_for_session_id(self, session_id: str = None) -> str:
         """
-        Gets a user ID from a session ID
+        returns a User ID based on a Session ID
+        arguments:
+            session_id (str): the session ID
+        returns:
+            the user ID
         """
         if session_id is None or not isinstance(session_id, str):
             return None
-        return self.usersession_id.get(session_id)
+        return self.user_id_by_session_id.get(session_id)
 
     def current_user(self, request=None):
         """
-        Gets a user instance using a cookie value
+        returns a User instance based on a cookie value
+        arguments:
+            request : request object
+        returns:
+            the instance
         """
         session_cookie = self.session_cookie(request)
         user_id = self.user_id_for_session_id(session_cookie)
@@ -43,9 +52,7 @@ class SessionAuth(Auth):
         return user
 
     def destroy_session(self, request=None):
-        """
-        Removes a user session
-        """
+        """deletes the user session / logout"""
         if request is None:
             return False
         session_cookie = self.session_cookie(request)
@@ -54,5 +61,5 @@ class SessionAuth(Auth):
         user_id = self.user_id_for_session_id(session_cookie)
         if user_id is None:
             return False
-        del self.usersession_id[session_cookie]
+        del self.user_id_by_session_id[session_cookie]
         return True
