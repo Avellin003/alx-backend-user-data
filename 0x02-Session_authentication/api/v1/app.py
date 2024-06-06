@@ -19,7 +19,7 @@ elif AUTHENTIC == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
     aut = BasicAuth()
 elif AUTHENTIC == "session_auth":
-    from api.v1.auth.session_auth import SessionAuth
+    from api.v1.views.session_auth import SessionAuth
     aut = SessionAuth()
 elif AUTHENTIC == "session_exp_auth":
     from api.v1.auth.session_exp_auth import SessionExpAuth
