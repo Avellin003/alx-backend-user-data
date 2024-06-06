@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Users module"""
+"""
+Auth class definition
+"""
 import os
 from flask import request
 from typing import (
@@ -9,15 +11,17 @@ from typing import (
 
 
 class Auth:
-    """Deals with authentication"""
+    """
+    API authentication management
+    """
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """
-        checks
-        argumnets:
-            - paths(str): Url to check
-            - excluded_pat: list not to check
-        Returns:
-            - The True if path is not in excluded_paths, else False
+        Checks if a path requires authentication
+        Args:
+            - path(str): Url path
+            - excluded_paths(List of str): Paths not requiring authentication
+        Return:
+            - True if path requires authentication, else False
         """
         if path is None:
             return True
@@ -29,15 +33,17 @@ class Auth:
             for a in excluded_paths:
                 if a.startswith(path):
                     return False
-                if path.startswith(i):
+                if path.startswith(a):
                     return False
                 if a[-1] == "*":
-                    if path.startswith(i[:-1]):
+                    if path.startswith(a[:-1]):
                         return False
         return True
 
     def authorization_header(self, request=None) -> str:
-        """Returns the value of the Authorization header in the request"""
+        """
+        Gets the authorization header from a request
+        """
         if request is None:
             return None
         head = request.headers.get('Authorization')
@@ -46,16 +52,18 @@ class Auth:
         return head
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """Returns the User instance based on a cookie value"""
+        """
+        Gets a User instance from a request
+        """
         return None
 
     def session_cookie(self, request=None):
         """
-        return a cookie from a request
-        arguments:
-            requests : request object
-        returns:
-            values of the cookie
+        Gets a cookie from a request
+        Args:
+            request : request object
+        Return:
+            _my_session_id cookie value from request
         """
         if request is None:
             return None

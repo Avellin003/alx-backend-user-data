@@ -1,37 +1,41 @@
 #!/usr/bin/env python3
-"""API module"""
+"""
+This module sets up the routes for the API
+"""
 from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 import os
 
-
+# Initialize Flask app
 app = Flask(__name__)
 app.register_blueprint(app_views)
+# Enable CORS
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
-aut = None
-AUTHENTIC = os.getenv("AUTH_TYPE")
-if AUTHENTIC == "auth":
+auth = None
+AUTHTYPE = os.getenv("AUTH_TYPE")
+# Import the appropriate authentication class based on the AUTH_TYPE environment variable
+if AUTHTYPE == "auth":
     from api.v1.auth.auth import Auth
-    aut = Auth()
-elif AUTHENTIC == "basic_auth":
+    auth = Auth()
+elif AUTHTYPE == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
     aut = BasicAuth()
-elif AUTHENTIC == "session_auth":
-    from api.v1.views.session_auth import SessionAuth
+elif AUTHTYPE == "session_auth":
+    from api.v1.auth.session_auth import SessionAuth
     aut = SessionAuth()
-elif AUTHENTIC == "session_exp_auth":
+elif AUTHTYPE == "session_exp_auth":
     from api.v1.auth.session_exp_auth import SessionExpAuth
     aut = SessionExpAuth()
-elif AUTHENTIC == "session_db_auth":
+elif AUTHTYPE == "session_db_auth":
     from api.v1.auth.session_db_auth import SessionDBAuth
     aut = SessionDBAuth()
 
-
 @app.before_request
 def bef_req():
-    """Before request
+    """
+    This function is run before each request. It checks if the request is authorized and aborts if not.
     """
     if aut is None:
         pass
@@ -50,29 +54,23 @@ def bef_req():
             if aut.current_user(request) is None:
                 abort(403, description="Forbidden")
 
-
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """ When no route is found
-    """
+    """ Handler for 404 errors. Returns a JSON response with an error message. """
     return jsonify({"error": "Not found"}), 404
-
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """REQUESTS UNAUTHORIZED HANDLER
-    """
+    """ Handler for 401 errors. Returns a JSON response with an error message. """
     return jsonify({"error": "Unauthorized"}), 401
-
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """ requests forbidden handler
-    """
+    """ Handler for 403 errors. Returns a JSON response with an error message. """
     return jsonify({"error": "Forbidden"}), 403
-
 
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
     port = getenv("API_PORT", "5000")
+    # Run the app
     app.run(host=host, port=port)
