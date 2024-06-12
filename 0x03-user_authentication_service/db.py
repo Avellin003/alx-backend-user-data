@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DB module
+Module for database operations
 """
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -13,11 +13,11 @@ from user import Base, User
 
 
 class DB:
-    """DB class
+    """Class for database operations
     """
 
     def __init__(self) -> None:
-        """Initialize a new DB instance
+        """Constructor for DB class
         """
         self._engine = create_engine("sqlite:///a.db",
                                      echo=False)
@@ -27,7 +27,7 @@ class DB:
 
     @property
     def _session(self) -> Session:
-        """Memoized session object
+        """Property for session object
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
@@ -36,52 +36,51 @@ class DB:
 
     def add_user(self, email: str, hashed_password: str) -> User:
         """
-        Makes a User object and save it to database
-        Arguments:
-            email (string): user email address
-            hashed_password(string): password hashed by bcrypt's hashpw
-        returns:
-            Newly created User object
+        Adds a new user to the database
+        Args:
+            email (str): The email of the user
+            hashed_password (str): The hashed password of the user
+        Return:
+            The newly created User object
         """
-        user = User(email=email, hashed_password=hashed_password)
-        self._session.add(user)
+        user_instance = User(email=email, hashed_password=hashed_password)
+        self._session.add(user_instance)
         self._session.commit()
-        return user
+        return user_instance
 
     def find_user_by(self, **kwargs) -> User:
         """
-        fetches the user who has an attribute matching the attributes passed
-        as arguments
-        Arguments:
-            atts (dictionary): a dictionary of attributes to match the user
-        Returns:
-            matching user or raise error
+        Finds a user by matching attributes
+        Args:
+            attributes (dict): The attributes to match the user
+        Return:
+            The matching user or an error
         """
         all_users = self._session.query(User)
-        for o, w in kwargs.items():
-            if o not in User.__dict__:
+        for attribute, value in kwargs.items():
+            if attribute not in User.__dict__:
                 raise InvalidRequestError
-            for us in all_users:
-                if getattr(us, o) == w:
-                    return us
+            for user in all_users:
+                if getattr(user, attribute) == value:
+                    return user
         raise NoResultFound
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """
-        updates the attributes
-        Argus:
-            user_id (integer): user's id
-            kwargs (dict): dictionary of attributes to update
-        Returns:
-            No return
+        Updates the attributes of a user
+        Args:
+            user_id (int): The id of the user
+            kwargs (dict): The attributes to update and their new values
+        Return:
+            None
         """
         try:
-            us = self.find_user_by(id=user_id)
+            user = self.find_user_by(id=user_id)
         except NoResultFound:
             raise ValueError()
-        for o, w in kwargs.items():
-            if hasattr(us, o):
-                setattr(us, o, )
+        for attribute, value in kwargs.items():
+            if hasattr(user, attribute):
+                setattr(user, attribute, value)
             else:
                 raise ValueError
         self._session.commit()
