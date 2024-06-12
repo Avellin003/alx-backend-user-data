@@ -1,13 +1,16 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 """
 User model for the user authentication service
 
 """
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import (
+        Column,
+        Integer,
+        String,
+        )
 from sqlalchemy.ext.declarative import declarative_base
 # declarative_base is in charge of tables in the database
 """Making an instance of the Base class"""
-
 
 Base = declarative_base()
 
