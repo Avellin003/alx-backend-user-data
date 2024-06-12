@@ -81,7 +81,7 @@ class DB:
             raise ValueError()
         for o, w in kwargs.items():
             if hasattr(us, o):
-                setattr(us, o, w)
+                setattr(us, o, )
             else:
                 raise ValueError
         self._session.commit()
