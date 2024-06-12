@@ -8,6 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 """Making an instance of the Base class"""
 Base = declarative_base()
 
+
 class User(Base):
     """User class for the user authentication service"""
     # the __tablename__ attribute defines the name of the table
