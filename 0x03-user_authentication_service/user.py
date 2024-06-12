@@ -19,13 +19,13 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     # the email attribute is a column of the table
     # it is a string, can not be empty
-    email = Column(String, nullable=False)
+    email = Column(String(250), nullable=False)
     # the hashed_password attribute is a column of the table
     # it is a string, can not be empty
-    hashed_password = Column(String, nullable=False)
+    hashed_password = Column(String(250), nullable=False)
     # the session_id attribute is a column of the table
     # it is a string, can be empty
-    session_id = Column(String, nullable=True)
+    session_id = Column(String(250), nullable=True)
     # the reset_token attribute is a column of the table
     # it is a string, can be empty
-    reset_token = Column(String, nullable=True)
+    reset_token = Column(String(250), nullable=True)
