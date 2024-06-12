@@ -13,7 +13,8 @@ from typing import (
 from db import DB
 from user import User
 
-U = TypeVar(User)
+U = TypeVar()
+
 
 def _hash_password(password: str) -> bytes:
     """
@@ -24,11 +25,13 @@ def _hash_password(password: str) -> bytes:
     pwd_bytes = password.encode('utf-8')
     return bcrypt.hashpw(pwd_bytes, bcrypt.gensalt())
 
+
 def _generate_uuid() -> str:
     """
     Generate a UUID and return its string representation.
     """
     return str(uuid4())
+
 
 class Auth:
     """Auth class to manage authentication and user sessions.
@@ -44,7 +47,7 @@ class Auth:
             email (str): email address of the new user
             password (str): password for the new user
         Return:
-            If no user with the given email exists, return the newly created user
+            If no email exists, return the newly created user
             Else raise a ValueError
         """
         try:
@@ -57,7 +60,8 @@ class Auth:
 
     def valid_login(self, email: str, password: str) -> bool:
         """
-        Validate a user's login credentials and return True if they are correct,
+        Validate a user's login credentials and
+        return True if they are correct,
         otherwise return False.
         Args:
             email (str): user's email address
@@ -76,7 +80,8 @@ class Auth:
 
     def create_session(self, email: str) -> Union[None, str]:
         """
-        Create a session ID for an existing user and update the user's
+        Create a session ID for an existing
+        user and update the user's
         session_id attribute.
         Args:
             email (str): user's email address
@@ -92,7 +97,8 @@ class Auth:
 
     def get_user_from_session_id(self, session_id: str) -> Union[None, U]:
         """
-        Retrieve the user associated with a given session_id, if one exists,
+        Retrieve the user associated with a
+        given session_id, if one exists,
         otherwise return None.
         Args:
             session_id (str): session ID for the user
@@ -111,7 +117,8 @@ class Auth:
 
     def destroy_session(self, user_id: int) -> None:
         """
-        Destroy a user's session by updating their session_id attribute to None.
+        Destroy a user's session by updating
+        their session_id attribute to None.
         Args:
             user_id (int): ID of the user
         Return:
@@ -125,7 +132,8 @@ class Auth:
 
     def get_reset_password_token(self, email: str) -> str:
         """
-        Generate a reset token UUID for a user identified by the given email.
+        Generate a reset token UUID for a
+        user identified by the given email.
         Args:
             email (str): user's email address
         Return:
@@ -142,7 +150,8 @@ class Auth:
 
     def update_password(self, reset_token: str, password: str) -> None:
         """
-        Update a user's password using the provided reset token.
+        Update a user's password using the
+        provided reset token.
         Args:
             reset_token (str): reset token issued for password reset
             password (str): new password for the user
@@ -155,4 +164,6 @@ class Auth:
             raise ValueError()
 
         new_hashed_password = _hash_password(password)
-        self._database.update_user(user_obj.id, hashed_password=new_hashed_password, reset_token=None)
+        self._database.update_user(
+            user_obj.id, hashed_password=new_hashed_password, reset_token=None
+            )
